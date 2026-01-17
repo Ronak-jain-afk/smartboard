@@ -1,4 +1,4 @@
-# 🎨 SmartBoard - AI-Powered Finger Writing System
+#  SmartBoard - AI-Powered Finger Writing System
 
 An intelligent drawing application that uses computer vision and hand tracking to let you draw in the air using just your fingers. Built with OpenCV and MediaPipe.
 
@@ -7,17 +7,17 @@ An intelligent drawing application that uses computer vision and hand tracking t
 ![MediaPipe](https://img.shields.io/badge/MediaPipe-0.10+-orange.svg)
 ![License](https://img.shields.io/badge/License-MIT-yellow.svg)
 
-## ✨ Features
+## Features
 
-- **🖐️ Gesture-Based Drawing** - Draw using your index finger
-- **✋ Palm Erasing** - Open your palm to erase
-- **✌️ Shape Mode** - Peace sign to draw shapes (lines, rectangles, circles, arrows)
-- **🎨 8-Color Palette** - Quick color switching with keyboard shortcuts
-- **↩️ Undo/Redo** - Full history support with up to 10 states
-- **💾 Auto-Save** - Automatic canvas saving every 30 seconds
-- **📊 Real-Time FPS** - Performance monitoring
+- **Gesture-Based Drawing** - Draw using your index finger
+- **Palm Erasing** - Open your palm to erase
+- **Shape Mode** - Peace sign to draw shapes (lines, rectangles, circles, arrows)
+- **8-Color Palette** - Quick color switching with keyboard shortcuts
+- **Undo/Redo** - Full history support with up to 10 states
+- **Auto-Save** - Automatic canvas saving every 30 seconds
+- **Real-Time FPS** - Performance monitoring
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 
@@ -28,7 +28,7 @@ An intelligent drawing application that uses computer vision and hand tracking t
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/smartboard.git
+   git clone https://github.com/Ronak-jain-afk/smartboard.git
    cd smartboard
    ```
 
@@ -53,7 +53,7 @@ An intelligent drawing application that uses computer vision and hand tracking t
    python main.py
    ```
 
-## 🖐️ Gesture Controls
+## Gesture Controls
 
 | Gesture | Action |
 |---------|--------|
@@ -62,7 +62,7 @@ An intelligent drawing application that uses computer vision and hand tracking t
 | ✌️ Peace sign (index + middle) | Shape drawing mode |
 | ✊ Fist (no fingers) | Pause |
 
-## ⌨️ Keyboard Shortcuts
+## Keyboard Shortcuts
 
 | Key | Action |
 |-----|--------|
@@ -77,7 +77,7 @@ An intelligent drawing application that uses computer vision and hand tracking t
 | `T` | Toggle trail effect |
 | `Q` | Quit |
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 smartboard/
@@ -101,7 +101,7 @@ Edit `config.py` to customize:
 - Auto-save interval
 - Camera resolution preferences
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
@@ -111,11 +111,11 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-## 📝 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - [MediaPipe](https://mediapipe.dev/) - Hand tracking solution
 - [OpenCV](https://opencv.org/) - Computer vision library
