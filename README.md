@@ -119,3 +119,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - [MediaPipe](https://mediapipe.dev/) - Hand tracking solution
 - [OpenCV](https://opencv.org/) - Computer vision library
+
+
+> **Note:** This README and code documentation were generated with assistance from AI.
