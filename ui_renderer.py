@@ -22,7 +22,9 @@ from config import (
     CROSSHAIR_THICKNESS,
     CURSOR_CIRCLE_RADIUS,
     MAX_HISTORY_SIZE,
-    CANVAS_BLEND_ALPHA
+    CANVAS_BLEND_ALPHA,
+    ARROW_HEAD_LENGTH,
+    ARROW_HEAD_ANGLE
 )
 
 
@@ -298,13 +300,11 @@ class UIRenderer:
         cv2.line(frame, start, end, color, 2)
         
         angle = math.atan2(end[1] - start[1], end[0] - start[0])
-        arrow_length = 20
-        arrow_angle = math.pi / 6
         
-        x1 = int(end[0] - arrow_length * math.cos(angle - arrow_angle))
-        y1 = int(end[1] - arrow_length * math.sin(angle - arrow_angle))
-        x2 = int(end[0] - arrow_length * math.cos(angle + arrow_angle))
-        y2 = int(end[1] - arrow_length * math.sin(angle + arrow_angle))
+        x1 = int(end[0] - ARROW_HEAD_LENGTH * math.cos(angle - ARROW_HEAD_ANGLE))
+        y1 = int(end[1] - ARROW_HEAD_LENGTH * math.sin(angle - ARROW_HEAD_ANGLE))
+        x2 = int(end[0] - ARROW_HEAD_LENGTH * math.cos(angle + ARROW_HEAD_ANGLE))
+        y2 = int(end[1] - ARROW_HEAD_LENGTH * math.sin(angle + ARROW_HEAD_ANGLE))
         
         cv2.line(frame, end, (x1, y1), color, 2)
         cv2.line(frame, end, (x2, y2), color, 2)
