@@ -51,6 +51,7 @@ class CanvasManager:
         # Drawing state
         self.prev_x: int = 0
         self.prev_y: int = 0
+        self._has_prev_position: bool = False
         
         # Color settings
         self.color_names: List[str] = list(COLORS.keys())
@@ -143,7 +144,7 @@ class CanvasManager:
         if self.show_trail:
             self.trail_points.append((x, y))
         
-        if self.prev_x != 0 and self.prev_y != 0:
+        if self._has_prev_position:
             cv2.line(
                 self.canvas,
                 (self.prev_x, self.prev_y),
@@ -153,6 +154,7 @@ class CanvasManager:
             )
         
         self.prev_x, self.prev_y = x, y
+        self._has_prev_position = True
     
     def erase_at(self, x: int, y: int) -> None:
         """
@@ -355,6 +357,7 @@ class CanvasManager:
     def reset_draw_position(self) -> None:
         """Reset the previous drawing position."""
         self.prev_x, self.prev_y = 0, 0
+        self._has_prev_position = False
     
     def get_history_info(self) -> Tuple[int, int]:
         """
