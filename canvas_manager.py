@@ -363,7 +363,7 @@ class CanvasManager:
         Returns:
             Tuple of (current_index, total_states).
         """
-        return len(self._history), MAX_HISTORY_SIZE
+        return self._history_index, len(self._history)
     
     def get_current_color_name(self) -> str:
         """Get the name of the current color."""

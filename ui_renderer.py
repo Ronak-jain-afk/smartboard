@@ -21,7 +21,6 @@ from config import (
     CROSSHAIR_SIZE,
     CROSSHAIR_THICKNESS,
     CURSOR_CIRCLE_RADIUS,
-    MAX_HISTORY_SIZE,
     CANVAS_BLEND_ALPHA,
     ARROW_HEAD_LENGTH,
     ARROW_HEAD_ANGLE
@@ -65,7 +64,8 @@ class UIRenderer:
         current_shape: str,
         position: Tuple[int, int],
         fps: int,
-        history_count: int
+        history_index: int,
+        history_total: int
     ) -> None:
         """
         Draw the status information panel.
@@ -115,7 +115,7 @@ class UIRenderer:
                    cv2.FONT_HERSHEY_SIMPLEX, 0.4, UI_SECONDARY_TEXT_COLOR, 1)
         
         # History info
-        cv2.putText(frame, f"History: {history_count}/{MAX_HISTORY_SIZE}", (x + 10, y + 150),
+        cv2.putText(frame, f"History: {history_index + 1}/{history_total}", (x + 10, y + 150),
                    cv2.FONT_HERSHEY_SIMPLEX, 0.4, UI_SECONDARY_TEXT_COLOR, 1)
     
     def draw_color_palette(

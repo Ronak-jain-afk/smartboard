@@ -213,7 +213,7 @@ class SmartBoard:
         )
         
         # Draw status panel
-        history_count, _ = self.canvas_manager.get_history_info()
+        history_index, history_total = self.canvas_manager.get_history_info()
         self.ui_renderer.draw_status_panel(
             combined,
             gesture=gesture,
@@ -223,7 +223,8 @@ class SmartBoard:
             current_shape=self.canvas_manager.current_shape,
             position=positions['index'],
             fps=self._current_fps,
-            history_count=history_count
+            history_index=history_index,
+            history_total=history_total
         )
         
         # Draw color palette
