@@ -38,7 +38,7 @@ CAMERA_FALLBACK_HEIGHTS: List[int] = [720, 768, 600, 480]
 BRUSH_SIZES: Tuple[int, ...] = (3, 5, 8, 12, 16)
 DEFAULT_BRUSH_INDEX: int = 1
 ERASER_THICKNESS: int = 50
-SMOOTHING_BUFFER_SIZE: int = 4
+SMOOTHING_BUFFER_SIZE: int = 3
 
 # =============================================================================
 # Color Palette (BGR format for OpenCV)

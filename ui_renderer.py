@@ -239,6 +239,9 @@ class UIRenderer:
         """
         x, y = position
         
+        if x <= 0 or y <= 0:
+            return
+        
         # Draw eraser circle
         cv2.circle(frame, (x, y), eraser_size, (0, 0, 255), 3)
         
