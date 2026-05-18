@@ -26,6 +26,7 @@ Keyboard Shortcuts:
 import logging
 import time
 import sys
+import os
 from typing import Optional
 
 import cv2
@@ -65,6 +66,10 @@ class SmartBoard:
         
         # State tracking
         self._is_running: bool = False
+        
+        # Auto-save notification state
+        self._notification_text: Optional[str] = None
+        self._notification_frames: int = 0
     
     def _initialize_components(self) -> bool:
         """
@@ -258,6 +263,13 @@ class SmartBoard:
             if shape_info:
                 self.ui_renderer.draw_shape_preview(combined, shape_info)
         
+        # Draw auto-save notification if active
+        if self._notification_frames > 0 and self._notification_text:
+            self.ui_renderer.draw_auto_save_notification(
+                combined, self._notification_text
+            )
+            self._notification_frames -= 1
+        
         return combined
     
     def _print_startup_info(self) -> None:
@@ -349,6 +361,8 @@ class SmartBoard:
                 saved_file = self.file_manager.auto_save_canvas(self.canvas_manager.canvas)
                 if saved_file:
                     logger.info(f"📁 Auto-saved: {saved_file}")
+                    self._notification_text = os.path.basename(saved_file)
+                    self._notification_frames = 60
                 
                 # Display frame
                 cv2.imshow('SmartBoard - Finger Writing System', combined_frame)
