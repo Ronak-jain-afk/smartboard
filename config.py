@@ -68,6 +68,7 @@ ARROW_HEAD_ANGLE: float = 0.5236  # pi/6 radians (30 degrees)
 # Canvas & Display Settings
 # =============================================================================
 CANVAS_BLEND_ALPHA: float = 0.7           # Frame-canvas blend ratio
+TARGET_FPS: int = 30                       # Target frame rate (0 = uncapped)
 TRAIL_LENGTH: int = 8                      # Finger trail visualization length
 SHOW_TRAIL_DEFAULT: bool = True
 

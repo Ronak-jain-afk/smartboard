@@ -33,7 +33,7 @@ import cv2
 import numpy as np
 
 # Local modules
-from config import CANVAS_BLEND_ALPHA
+from config import CANVAS_BLEND_ALPHA, TARGET_FPS
 from camera_manager import CameraManager
 from gesture_recognizer import GestureRecognizer
 from canvas_manager import CanvasManager
@@ -303,6 +303,8 @@ class SmartBoard:
         
         try:
             while self._is_running:
+                loop_start = time.time()
+                
                 # Read frame
                 ret, frame = self.camera.read_frame(flip=True)
                 if not ret:
@@ -366,6 +368,13 @@ class SmartBoard:
                 
                 # Display frame
                 cv2.imshow('SmartBoard - Finger Writing System', combined_frame)
+                
+                # Cap frame rate to save CPU
+                if TARGET_FPS > 0:
+                    elapsed = time.time() - loop_start
+                    sleep_time = 1.0 / TARGET_FPS - elapsed
+                    if sleep_time > 0:
+                        time.sleep(sleep_time)
                 
                 # Handle keyboard input
                 if key != 255 and key != 13:  # Not waiting and not Enter
