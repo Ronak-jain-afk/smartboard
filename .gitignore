@@ -46,3 +46,8 @@ Thumbs.db
 
 # Logs
 *.log
+.aider*
+
+# plans
+AGENTS.md
+IMPROVEMENT_PLAN.md

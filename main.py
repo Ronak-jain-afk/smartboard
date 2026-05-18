@@ -154,11 +154,6 @@ class SmartBoard:
             if self.canvas_manager.set_color(color_index):
                 logger.info(f"🎨 Color: {self.canvas_manager.get_current_color_name()}")
         
-        elif key == 13:  # Enter key - complete shape
-            if self.canvas_manager.shape_start_point:
-                # Shape will be completed in main loop
-                pass
-        
         return False
     
     def _process_frame(
