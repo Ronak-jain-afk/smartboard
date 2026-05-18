@@ -97,7 +97,6 @@ GESTURE_DISPLAY_NAMES: Dict[str, str] = {
     'drawing': 'DRAWING',
     'palm_erase': 'PALM ERASE',
     'shape_mode': 'SHAPE MODE',
-    'menu': 'MENU',
     'pause': 'PAUSE',
     'none': 'NONE'
 }
@@ -106,7 +105,6 @@ GESTURE_COLORS: Dict[str, Tuple[int, int, int]] = {
     'drawing': (0, 255, 0),      # Green
     'palm_erase': (0, 0, 255),   # Red
     'shape_mode': (255, 255, 0), # Cyan
-    'menu': (255, 0, 255),       # Magenta
     'pause': (255, 255, 255),    # White
     'none': (255, 255, 255)      # White
 }
