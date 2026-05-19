@@ -315,8 +315,7 @@ class UIRenderer:
     def draw_auto_save_notification(
         self,
         frame: np.ndarray,
-        filename: str,
-        duration_frames: int = 60
+        filename: str
     ) -> None:
         """
         Draw auto-save notification.
@@ -324,7 +323,6 @@ class UIRenderer:
         Args:
             frame: Frame to draw on.
             filename: Name of saved file.
-            duration_frames: How long to show notification.
         """
         height = frame.shape[0]
         
