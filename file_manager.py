@@ -143,8 +143,9 @@ class FileManager:
             if filename is None:
                 timestamp = time.strftime("%Y%m%d_%H%M%S")
                 filename = f"finger_drawing_{timestamp}.{AUTO_SAVE_FORMAT}"
-            
-            filepath = self.base_dir / filename
+                filepath = self.auto_save_dir / filename
+            else:
+                filepath = self.base_dir / filename
             
             success = cv2.imwrite(str(filepath), canvas)
             
