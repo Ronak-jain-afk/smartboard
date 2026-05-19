@@ -368,6 +368,12 @@ class SmartBoard:
                                 and self._prev_gesture not in (GestureRecognizer.GESTURE_DRAWING, GestureRecognizer.GESTURE_PALM_ERASE)):
                             self.canvas_manager.save_canvas_state()
                         
+                        # Reset smoothing buffer when entering shape mode
+                        if (self._prev_gesture is not None
+                                and current_gesture == GestureRecognizer.GESTURE_SHAPE_MODE
+                                and self._prev_gesture != GestureRecognizer.GESTURE_SHAPE_MODE):
+                            self.gesture_recognizer.reset_buffers()
+                        
                         # Process gesture actions
                         self._process_frame(frame, positions, current_gesture)
                         
