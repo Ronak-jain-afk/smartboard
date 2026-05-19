@@ -8,7 +8,14 @@ Includes gesture buffering for smooth recognition.
 import logging
 from collections import deque
 from typing import Dict, Tuple, Optional, List
-import mediapipe as mp
+
+try:
+    from mediapipe.python.solutions import hands as mp_hands
+    from mediapipe.python.solutions import drawing_utils as mp_drawing
+except ImportError:
+    import mediapipe as mp
+    mp_hands = mp.solutions.hands
+    mp_drawing = mp.solutions.drawing_utils
 
 from config import (
     DETECTION_CONFIDENCE,
@@ -37,14 +44,14 @@ class GestureRecognizer:
     
     def __init__(self):
         """Initialize the gesture recognizer with MediaPipe."""
-        self.mp_hands = mp.solutions.hands
-        self.hands = self.mp_hands.Hands(
+        self.mp_hands = mp_hands
+        self.hands = mp_hands.Hands(
             static_image_mode=STATIC_IMAGE_MODE,
             max_num_hands=MAX_NUM_HANDS,
             min_detection_confidence=DETECTION_CONFIDENCE,
             min_tracking_confidence=TRACKING_CONFIDENCE
         )
-        self.mp_drawing = mp.solutions.drawing_utils
+        self.mp_drawing = mp_drawing
         
         # Gesture smoothing buffer using deque for O(1) operations
         self.gesture_buffer: deque = deque(maxlen=GESTURE_BUFFER_SIZE)
