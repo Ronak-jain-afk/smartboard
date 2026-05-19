@@ -74,6 +74,9 @@ class SmartBoard:
         
         # Landmark overlay
         self._show_landmarks: bool = True
+        
+        # Clear canvas confirmation
+        self._last_clear_press: float = 0.0
     
     def _initialize_components(self) -> bool:
         """
@@ -126,8 +129,14 @@ class SmartBoard:
             return True
         
         elif key == ord('c'):
-            self.canvas_manager.clear_canvas()
-            logger.info("🗑️ Canvas cleared!")
+            now = time.time()
+            if now - self._last_clear_press < 1.0:
+                self.canvas_manager.clear_canvas()
+                logger.info("🗑️ Canvas cleared!")
+                self._last_clear_press = 0.0
+            else:
+                self._last_clear_press = now
+                logger.info("⌨️ Press C again within 1s to confirm clear")
         
         elif key == ord('s'):
             saved_path = self.file_manager.save_canvas(self.canvas_manager.canvas)
