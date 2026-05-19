@@ -19,8 +19,8 @@ Keyboard Shortcuts:
     -/+: Brush size
     Space: Cycle shapes
     Z: Undo | X: Redo
-    C: Clear | S: Save
-    T: Toggle trail | Q: Quit
+    C: Clear (double-tap) | S: Save
+    H: Toggle landmarks | T: Trail | Q: Quit
 """
 
 import logging
