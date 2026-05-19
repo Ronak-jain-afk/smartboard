@@ -66,6 +66,7 @@ class SmartBoard:
         
         # State tracking
         self._is_running: bool = False
+        self._prev_gesture: Optional[str] = None
         
         # Auto-save notification state
         self._notification_text: Optional[str] = None
@@ -344,8 +345,18 @@ class SmartBoard:
                         raw_gesture = self.gesture_recognizer.detect_gesture(hand_landmarks)
                         current_gesture = self.gesture_recognizer.get_stable_gesture(raw_gesture)
                         
+                        # Save canvas state at start of a new stroke
+                        if (self._prev_gesture is not None
+                                and current_gesture in (GestureRecognizer.GESTURE_DRAWING, GestureRecognizer.GESTURE_PALM_ERASE)
+                                and self._prev_gesture not in (GestureRecognizer.GESTURE_DRAWING, GestureRecognizer.GESTURE_PALM_ERASE)):
+                            self.canvas_manager.save_canvas_state()
+                        
                         # Process gesture actions
                         self._process_frame(frame, positions, current_gesture)
+                        
+                        self._prev_gesture = current_gesture
+                else:
+                    self._prev_gesture = GestureRecognizer.GESTURE_NONE
                 
                 # Check for shape completion via Enter key
                 key = cv2.waitKey(1) & 0xFF
