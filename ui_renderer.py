@@ -327,5 +327,9 @@ class UIRenderer:
         height = frame.shape[0]
         
         text = f"Auto-saved: {filename}"
+        (tw, th), _ = cv2.getTextSize(text, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 1)
+        bg_x, bg_y = 8, height - 90
+        cv2.rectangle(frame, (bg_x, bg_y), (bg_x + tw + 6, bg_y + th + 8),
+                      UI_PANEL_COLOR, -1)
         cv2.putText(frame, text, (10, height - 80),
                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
