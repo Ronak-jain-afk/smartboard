@@ -19,7 +19,7 @@ STATIC_IMAGE_MODE: bool = False
 # Gesture Detection Settings
 # =============================================================================
 FINGER_EXTENSION_THRESHOLD: float = 0.04  # Threshold for detecting extended fingers
-GESTURE_BUFFER_SIZE: int = 12             # Buffer size for gesture smoothing
+GESTURE_BUFFER_SIZE: int = 6              # Buffer size for gesture smoothing
 GESTURE_CONFIRMATION_FRAMES: int = 6       # Recent frames to analyze
 GESTURE_CONFIRMATION_COUNT: int = 4        # Min count to confirm gesture
 

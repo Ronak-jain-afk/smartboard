@@ -171,25 +171,16 @@ class GestureRecognizer:
         if len(self.gesture_buffer) < GESTURE_CONFIRMATION_FRAMES:
             return current_gesture
         
-        # Count gestures in recent frames using Counter-like logic
-        # Iterate directly over deque slice (more efficient than list conversion)
         gesture_counts: Dict[str, int] = {}
-        for i, g in enumerate(self.gesture_buffer):
-            if i >= len(self.gesture_buffer) - GESTURE_CONFIRMATION_FRAMES:
-                gesture_counts[g] = gesture_counts.get(g, 0) + 1
+        for g in self.gesture_buffer:
+            gesture_counts[g] = gesture_counts.get(g, 0) + 1
         
-        # Find most common gesture
         most_common = max(gesture_counts, key=gesture_counts.get)
         
         if gesture_counts[most_common] >= GESTURE_CONFIRMATION_COUNT:
             return most_common
         
-        # Fall back to previous gesture if no clear majority
-        if len(self.gesture_buffer) > 1:
-            # Get second to last item from deque
-            return self.gesture_buffer[-2]
-        
-        return current_gesture
+        return self.gesture_buffer[-2]
     
     def smooth_coordinates(self, x: int, y: int) -> Tuple[int, int]:
         """
