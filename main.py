@@ -180,7 +180,6 @@ class SmartBoard:
     
     def _process_frame(
         self,
-        frame: np.ndarray,
         positions: dict,
         gesture: str
     ) -> None:
@@ -188,7 +187,6 @@ class SmartBoard:
         Process a frame based on the detected gesture.
         
         Args:
-            frame: Current camera frame.
             positions: Dictionary with 'index' and 'palm' positions.
             gesture: Current detected gesture.
         """
@@ -375,7 +373,7 @@ class SmartBoard:
                             self.gesture_recognizer.reset_buffers()
                         
                         # Process gesture actions
-                        self._process_frame(frame, positions, current_gesture)
+                        self._process_frame(positions, current_gesture)
                         
                         self._prev_gesture = current_gesture
                 else:
