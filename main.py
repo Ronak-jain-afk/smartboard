@@ -33,7 +33,7 @@ import cv2
 import numpy as np
 
 # Local modules
-from config import CANVAS_BLEND_ALPHA, TARGET_FPS
+from config import CANVAS_BLEND_ALPHA, TARGET_FPS, AUTO_SAVE_NOTIFICATION_FRAMES
 from camera_manager import CameraManager
 from gesture_recognizer import GestureRecognizer
 from canvas_manager import CanvasManager
@@ -383,7 +383,7 @@ class SmartBoard:
                 if saved_file:
                     logger.info(f"📁 Auto-saved: {saved_file}")
                     self._notification_text = os.path.basename(saved_file)
-                    self._notification_frames = 60
+                    self._notification_frames = AUTO_SAVE_NOTIFICATION_FRAMES
                 
                 # Display frame
                 cv2.imshow('SmartBoard - Finger Writing System', combined_frame)

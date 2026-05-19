@@ -84,6 +84,7 @@ AUTO_SAVE_INTERVAL: int = 30              # Seconds between auto-saves
 AUTO_SAVE_DIR: str = "auto_saves"
 AUTO_SAVE_MAX_FILES: int = 10             # Maximum auto-save files to keep
 AUTO_SAVE_FORMAT: str = "jpg"
+AUTO_SAVE_NOTIFICATION_FRAMES: int = 60   # Frames to show on-screen notification
 
 # =============================================================================
 # UI Settings
