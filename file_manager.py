@@ -5,7 +5,6 @@ Handles all file I/O operations including saving, auto-saving, and cleanup.
 Includes proper error handling and path validation.
 """
 
-import os
 import time
 import logging
 from pathlib import Path

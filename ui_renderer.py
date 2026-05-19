@@ -79,7 +79,8 @@ class UIRenderer:
             current_shape: Current shape type (if in shape mode).
             position: Current cursor (x, y) position.
             fps: Current FPS.
-            history_count: Number of items in history.
+            history_index: Current undo position (0-indexed).
+            history_total: Total saved states.
         """
         x, y, w, h = UI_PANEL_POSITION
         
