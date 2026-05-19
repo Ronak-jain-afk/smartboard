@@ -403,6 +403,10 @@ class SmartBoard:
                 # Display frame
                 cv2.imshow('SmartBoard - Finger Writing System', combined_frame)
                 
+                # Exit if window was closed (e.g., clicked X)
+                if cv2.getWindowProperty('SmartBoard - Finger Writing System', cv2.WND_PROP_VISIBLE) < 1:
+                    break
+                
                 # Cap frame rate to save CPU
                 if TARGET_FPS > 0:
                     elapsed = time.time() - loop_start
