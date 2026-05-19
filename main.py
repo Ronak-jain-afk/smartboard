@@ -71,6 +71,9 @@ class SmartBoard:
         # Auto-save notification state
         self._notification_text: Optional[str] = None
         self._notification_frames: int = 0
+        
+        # Landmark overlay
+        self._show_landmarks: bool = True
     
     def _initialize_components(self) -> bool:
         """
@@ -142,6 +145,10 @@ class SmartBoard:
         elif key == ord('t'):
             new_state = self.canvas_manager.toggle_trail()
             logger.info(f"✨ Trail: {'ON' if new_state else 'OFF'}")
+        
+        elif key == ord('h'):
+            self._show_landmarks = not self._show_landmarks
+            logger.info(f"👁️ Landmarks: {'ON' if self._show_landmarks else 'OFF'}")
         
         elif key == ord(' '):
             new_shape = self.canvas_manager.cycle_shape()
@@ -289,7 +296,7 @@ class SmartBoard:
         print("   Space: Cycle shapes")
         print("   Z: Undo | X: Redo")
         print("   C: Clear | S: Save")
-        print("   T: Toggle trail | Q: Quit")
+        print("   H: Toggle landmarks | T: Trail | Q: Quit")
         print("=" * 60 + "\n")
     
     def run(self) -> None:
@@ -326,7 +333,8 @@ class SmartBoard:
                 if results.multi_hand_landmarks:
                     for hand_landmarks in results.multi_hand_landmarks:
                         # Draw hand landmarks
-                        self.gesture_recognizer.draw_hand_landmarks(frame, hand_landmarks)
+                        if self._show_landmarks:
+                            self.gesture_recognizer.draw_hand_landmarks(frame, hand_landmarks)
                         
                         # Get finger positions
                         positions = self.gesture_recognizer.get_finger_positions(
