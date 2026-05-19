@@ -207,19 +207,9 @@ class GestureRecognizer:
         if len(self.smoothing_buffer) < 2:
             return x, y
         
-        # Use last 3 points for smoothing (or fewer if not available)
-        points_to_use = min(3, len(self.smoothing_buffer))
-        
-        # Calculate average directly from deque tail
-        total_x = 0
-        total_y = 0
-        for i in range(1, points_to_use + 1):
-            idx = -i
-            total_x += self.smoothing_buffer[idx][0]
-            total_y += self.smoothing_buffer[idx][1]
-        
-        avg_x = total_x // points_to_use
-        avg_y = total_y // points_to_use
+        points = list(self.smoothing_buffer)
+        avg_x = sum(p[0] for p in points) // len(points)
+        avg_y = sum(p[1] for p in points) // len(points)
         
         return avg_x, avg_y
     
