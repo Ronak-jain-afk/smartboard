@@ -151,6 +151,8 @@ class SmartBoard:
                     loaded = cv2.resize(loaded, (self.canvas_manager.width, self.canvas_manager.height))
                     self.canvas_manager.canvas = loaded
                     self.canvas_manager.save_canvas_state()
+                    self._notification_text = f"Loaded: {auto_saves[0].name}"
+                    self._notification_frames = AUTO_SAVE_NOTIFICATION_FRAMES
                     logger.info(f"📂 Loaded: {auto_saves[0].name}")
                 else:
                     logger.warning("Failed to load auto-save")
@@ -409,7 +411,7 @@ class SmartBoard:
                 saved_file = self.file_manager.auto_save_canvas(self.canvas_manager.canvas)
                 if saved_file:
                     logger.info(f"📁 Auto-saved: {saved_file}")
-                    self._notification_text = os.path.basename(saved_file)
+                    self._notification_text = f"Auto-saved: {os.path.basename(saved_file)}"
                     self._notification_frames = AUTO_SAVE_NOTIFICATION_FRAMES
                 
                 # Display frame

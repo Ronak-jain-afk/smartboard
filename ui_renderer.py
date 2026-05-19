@@ -317,18 +317,16 @@ class UIRenderer:
     def draw_auto_save_notification(
         self,
         frame: np.ndarray,
-        filename: str
+        text: str
     ) -> None:
         """
         Draw auto-save notification.
         
         Args:
             frame: Frame to draw on.
-            filename: Name of saved file.
+            text: Message to display.
         """
         height = frame.shape[0]
-        
-        text = f"Auto-saved: {filename}"
         (tw, th), _ = cv2.getTextSize(text, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 1)
         bg_x, bg_y = 8, height - 90
         cv2.rectangle(frame, (bg_x, bg_y), (bg_x + tw + 6, bg_y + th + 8),
