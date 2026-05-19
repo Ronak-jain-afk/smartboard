@@ -216,8 +216,9 @@ class UIRenderer:
             trail_points: List of trail points.
             color: Base color for the trail.
         """
-        for i in range(1, len(trail_points)):
-            alpha = i / len(trail_points)
+        n = len(trail_points)
+        for i in range(1, n):
+            alpha = max(0.3, i / n)
             pt1 = trail_points[i - 1]
             pt2 = trail_points[i]
             trail_color = tuple(int(c * alpha) for c in color)
