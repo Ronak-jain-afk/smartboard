@@ -76,6 +76,7 @@ SHOW_TRAIL_DEFAULT: bool = True
 # History (Undo/Redo) Settings
 # =============================================================================
 MAX_HISTORY_SIZE: int = 10
+CLEAR_CONFIRM_TIMEOUT: float = 1.0        # Seconds for double-tap clear window
 
 # =============================================================================
 # Auto-Save Settings

@@ -33,7 +33,7 @@ import cv2
 import numpy as np
 
 # Local modules
-from config import CANVAS_BLEND_ALPHA, TARGET_FPS, AUTO_SAVE_NOTIFICATION_FRAMES
+from config import CANVAS_BLEND_ALPHA, TARGET_FPS, AUTO_SAVE_NOTIFICATION_FRAMES, CLEAR_CONFIRM_TIMEOUT
 from camera_manager import CameraManager
 from gesture_recognizer import GestureRecognizer
 from canvas_manager import CanvasManager
@@ -130,7 +130,7 @@ class SmartBoard:
         
         elif key == ord('c'):
             now = time.time()
-            if now - self._last_clear_press < 1.0:
+            if now - self._last_clear_press < CLEAR_CONFIRM_TIMEOUT:
                 self.canvas_manager.clear_canvas()
                 logger.info("🗑️ Canvas cleared!")
                 self._last_clear_press = 0.0
