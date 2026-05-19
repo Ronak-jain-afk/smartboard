@@ -345,16 +345,15 @@ class SmartBoard:
                 height, width = frame.shape[:2]
                 
                 # Process hand detection
-                rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                results = self.gesture_recognizer.process_frame(rgb_frame)
+                results = self.gesture_recognizer.process_frame(frame)
                 
                 # Default values
                 current_gesture = GestureRecognizer.GESTURE_NONE
                 positions = {'index': (0, 0), 'palm': (0, 0)}
                 
                 # Process hand landmarks if detected
-                if results.multi_hand_landmarks:
-                    for hand_landmarks in results.multi_hand_landmarks:
+                hand_landmarks_list = results.hand_landmarks if results else []
+                for hand_landmarks in hand_landmarks_list:
                         # Draw hand landmarks
                         if self._show_landmarks:
                             self.gesture_recognizer.draw_hand_landmarks(frame, hand_landmarks)

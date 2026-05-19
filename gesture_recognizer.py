@@ -6,22 +6,18 @@ Includes gesture buffering for smooth recognition.
 """
 
 import logging
+import os
+import urllib.request
 from collections import deque
 from typing import Dict, Tuple, Optional, List
 
-try:
-    from mediapipe.python.solutions import hands as mp_hands
-    from mediapipe.python.solutions import drawing_utils as mp_drawing
-except ImportError:
-    import mediapipe as mp
-    mp_hands = mp.solutions.hands
-    mp_drawing = mp.solutions.drawing_utils
+import cv2
+import numpy as np
 
 from config import (
     DETECTION_CONFIDENCE,
     TRACKING_CONFIDENCE,
     MAX_NUM_HANDS,
-    STATIC_IMAGE_MODE,
     FINGER_EXTENSION_THRESHOLD,
     GESTURE_BUFFER_SIZE,
     GESTURE_CONFIRMATION_FRAMES,
@@ -30,6 +26,31 @@ from config import (
 )
 
 logger = logging.getLogger(__name__)
+
+_MODEL_URL = (
+    "https://storage.googleapis.com/mediapipe-models/"
+    "hand_landmarker/hand_landmarker/float16/latest/hand_landmarker.task"
+)
+_MODEL_PATH = os.path.join(os.path.dirname(__file__), "hand_landmarker.task")
+
+
+def _ensure_model() -> str:
+    """Download the model file if it doesn't exist."""
+    if os.path.exists(_MODEL_PATH):
+        return _MODEL_PATH
+    logger.info("Downloading hand_landmarker.task model...")
+    urllib.request.urlretrieve(_MODEL_URL, _MODEL_PATH)
+    logger.info("Model downloaded.")
+    return _MODEL_PATH
+
+
+from mediapipe.tasks.python.vision import (
+    HandLandmarker,
+    HandLandmarkerOptions,
+    RunningMode,
+)
+from mediapipe.tasks.python.vision.core.image import Image as MpImage, ImageFormat
+from mediapipe.tasks.python.core.base_options import BaseOptions
 
 
 class GestureRecognizer:
@@ -44,36 +65,42 @@ class GestureRecognizer:
     
     def __init__(self):
         """Initialize the gesture recognizer with MediaPipe."""
-        self.mp_hands = mp_hands
-        self.hands = mp_hands.Hands(
-            static_image_mode=STATIC_IMAGE_MODE,
-            max_num_hands=MAX_NUM_HANDS,
-            min_detection_confidence=DETECTION_CONFIDENCE,
-            min_tracking_confidence=TRACKING_CONFIDENCE
-        )
-        self.mp_drawing = mp_drawing
+        model_path = _ensure_model()
         
-        # Gesture smoothing buffer using deque for O(1) operations
+        options = HandLandmarkerOptions(
+            base_options=BaseOptions(model_asset_path=model_path),
+            running_mode=RunningMode.VIDEO,
+            num_hands=MAX_NUM_HANDS,
+            min_hand_detection_confidence=DETECTION_CONFIDENCE,
+            min_tracking_confidence=TRACKING_CONFIDENCE,
+        )
+        self._landmarker = HandLandmarker.create_from_options(options)
+        self._frame_timestamp = 0
+        
+        # Gesture smoothing buffer
         self.gesture_buffer: deque = deque(maxlen=GESTURE_BUFFER_SIZE)
         
         # Coordinate smoothing buffer
         self.smoothing_buffer: deque = deque(maxlen=SMOOTHING_BUFFER_SIZE)
         
         # Landmark indices for finger detection
-        self._finger_tips = (8, 12, 16, 20)  # Index, Middle, Ring, Pinky tips
-        self._finger_mcps = (5, 9, 13, 17)   # Corresponding MCP joints
+        self._finger_tips = (8, 12, 16, 20)
+        self._finger_mcps = (5, 9, 13, 17)
     
-    def process_frame(self, rgb_frame) -> Optional[object]:
+    def process_frame(self, bgr_frame) -> Optional[object]:
         """
-        Process a frame and return hand detection results.
+        Process a BGR frame and return hand detection results.
         
         Args:
-            rgb_frame: RGB image frame from camera.
+            bgr_frame: BGR image frame from camera.
             
         Returns:
-            MediaPipe hand detection results, or None if no hands detected.
+            MediaPipe HandLandmarkerResult, or None if no hands detected.
         """
-        return self.hands.process(rgb_frame)
+        self._frame_timestamp += 1
+        rgb = cv2.cvtColor(bgr_frame, cv2.COLOR_BGR2RGB)
+        mp_image = MpImage(image_format=ImageFormat.SRGB, data=rgb)
+        return self._landmarker.detect_for_video(mp_image, self._frame_timestamp)
     
     def get_finger_positions(
         self, 
@@ -85,21 +112,20 @@ class GestureRecognizer:
         
         Args:
             frame_shape: Tuple of (height, width) of the frame.
-            hand_landmarks: MediaPipe hand landmarks.
+            hand_landmarks: List of 21 NormalizedLandmark objects.
             
         Returns:
             Dictionary with 'index' and 'palm' positions as (x, y) tuples.
         """
         height, width = frame_shape
-        landmarks = hand_landmarks.landmark
         
-        # Index finger tip position
-        index_tip = landmarks[8]
+        # Index finger tip position (landmark 8)
+        index_tip = hand_landmarks[8]
         index_pos = (int(index_tip.x * width), int(index_tip.y * height))
         
         # Palm center (average of wrist and middle MCP)
-        wrist = landmarks[0]
-        middle_mcp = landmarks[9]
+        wrist = hand_landmarks[0]
+        middle_mcp = hand_landmarks[9]
         palm_x = int((wrist.x + middle_mcp.x) * width / 2)
         palm_y = int((wrist.y + middle_mcp.y) * height / 2)
         
@@ -113,21 +139,20 @@ class GestureRecognizer:
         Detect which fingers are extended.
         
         Args:
-            landmarks: MediaPipe hand landmarks.
+            landmarks: List of 21 NormalizedLandmark objects.
             
         Returns:
             List of 5 booleans [thumb, index, middle, ring, pinky].
         """
-        lm = landmarks.landmark
         fingers = []
         
         # Thumb detection (horizontal movement)
-        thumb_extended = abs(lm[4].x - lm[2].x) > FINGER_EXTENSION_THRESHOLD
+        thumb_extended = abs(landmarks[4].x - landmarks[2].x) > FINGER_EXTENSION_THRESHOLD
         fingers.append(thumb_extended)
         
         # Other fingers (vertical movement)
         for tip_id, mcp_id in zip(self._finger_tips, self._finger_mcps):
-            finger_extended = (lm[mcp_id].y - lm[tip_id].y) > FINGER_EXTENSION_THRESHOLD
+            finger_extended = (landmarks[mcp_id].y - landmarks[tip_id].y) > FINGER_EXTENSION_THRESHOLD
             fingers.append(finger_extended)
         
         return fingers
@@ -137,27 +162,24 @@ class GestureRecognizer:
         Detect the current hand gesture.
         
         Args:
-            hand_landmarks: MediaPipe hand landmarks.
+            hand_landmarks: List of 21 NormalizedLandmark objects.
             
         Returns:
             Gesture string constant.
         """
         fingers = self._detect_extended_fingers(hand_landmarks)
         
-        # Count extended fingers (excluding thumb)
         extended_count = sum(fingers[1:])
-        
         index_up = fingers[1]
         middle_up = fingers[2]
         
-        # Gesture classification
-        if extended_count >= 4:  # Open palm
+        if extended_count >= 4:
             return self.GESTURE_PALM_ERASE
-        elif extended_count == 1 and index_up:  # Only index finger
+        elif extended_count == 1 and index_up:
             return self.GESTURE_DRAWING
-        elif extended_count == 2 and index_up and middle_up:  # Peace sign
+        elif extended_count == 2 and index_up and middle_up:
             return self.GESTURE_SHAPE_MODE
-        elif extended_count == 0:  # Fist
+        elif extended_count == 0:
             return self.GESTURE_PAUSE
         else:
             return self.GESTURE_NONE
@@ -165,7 +187,6 @@ class GestureRecognizer:
     def get_stable_gesture(self, current_gesture: str) -> str:
         """
         Get a stabilized gesture using the gesture buffer.
-        Helps reduce flickering between gesture states.
         
         Args:
             current_gesture: The currently detected gesture.
@@ -213,17 +234,29 @@ class GestureRecognizer:
     
     def draw_hand_landmarks(self, frame, hand_landmarks) -> None:
         """
-        Draw hand landmarks on the frame.
+        Draw hand landmarks on the frame using MediaPipe drawing utils.
         
         Args:
             frame: BGR frame to draw on.
-            hand_landmarks: MediaPipe hand landmarks.
+            hand_landmarks: List of 21 NormalizedLandmark objects.
         """
-        self.mp_drawing.draw_landmarks(
-            frame, 
-            hand_landmarks, 
-            self.mp_hands.HAND_CONNECTIONS
-        )
+        h, w = frame.shape[:2]
+        connections = [
+            (0, 1), (1, 2), (2, 3), (3, 4),
+            (0, 5), (5, 6), (6, 7), (7, 8),
+            (0, 9), (9, 10), (10, 11), (11, 12),
+            (0, 13), (13, 14), (14, 15), (15, 16),
+            (0, 17), (17, 18), (18, 19), (19, 20),
+            (5, 9), (9, 13), (13, 17),
+        ]
+        for start, end in connections:
+            p1 = (int(hand_landmarks[start].x * w), int(hand_landmarks[start].y * h))
+            p2 = (int(hand_landmarks[end].x * w), int(hand_landmarks[end].y * h))
+            cv2.line(frame, p1, p2, (0, 255, 0), 1)
+        
+        for lm in hand_landmarks:
+            cx, cy = int(lm.x * w), int(lm.y * h)
+            cv2.circle(frame, (cx, cy), 2, (255, 0, 0), -1)
     
     def reset_buffers(self) -> None:
         """Clear gesture and smoothing buffers."""
@@ -232,4 +265,4 @@ class GestureRecognizer:
     
     def close(self) -> None:
         """Release MediaPipe resources."""
-        self.hands.close()
+        self._landmarker.close()
