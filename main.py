@@ -19,7 +19,7 @@ Keyboard Shortcuts:
     -/+: Brush size
     Space: Cycle shapes
     Z: Undo | X: Redo
-    C: Clear (double-tap) | S: Save
+    C: Clear (double-tap) | S: Save | L: Load last save
     H: Toggle landmarks | T: Trail | Q: Quit
 """
 
@@ -142,6 +142,20 @@ class SmartBoard:
             saved_path = self.file_manager.save_canvas(self.canvas_manager.canvas)
             if saved_path:
                 logger.info(f"💾 Drawing saved as {saved_path}")
+        
+        elif key == ord('l'):
+            auto_saves = self.file_manager.get_auto_save_list()
+            if auto_saves:
+                loaded = self.file_manager.load_canvas(str(auto_saves[0]))
+                if loaded is not None:
+                    loaded = cv2.resize(loaded, (self.canvas_manager.width, self.canvas_manager.height))
+                    self.canvas_manager.canvas = loaded
+                    self.canvas_manager.save_canvas_state()
+                    logger.info(f"📂 Loaded: {auto_saves[0].name}")
+                else:
+                    logger.warning("Failed to load auto-save")
+            else:
+                logger.info("No auto-saves found")
         
         elif key == ord('z'):
             if self.canvas_manager.undo():
@@ -302,7 +316,7 @@ class SmartBoard:
         print("   -/+: Brush size")
         print("   Space: Cycle shapes")
         print("   Z: Undo | X: Redo")
-        print("   C: Clear | S: Save")
+        print("   C: Clear | S: Save | L: Load last auto-save")
         print("   H: Toggle landmarks | T: Trail | Q: Quit")
         print("=" * 60 + "\n")
     

@@ -161,7 +161,7 @@ class UIRenderer:
         
         instructions = [
             "GESTURES: Index=Draw | Open Palm=Erase | Peace=Shapes | Fist=Pause",
-            "CONTROLS: 1-8=Colors | -/+=Brush | Space=Shapes | Z=Undo | X=Redo | H=Hand | T=Trail | C=Clear | S=Save"
+            "CONTROLS: 1-8=Colors | -/+=Brush | Space=Shapes | Z=Undo | X=Redo | H=Hand | T=Trail | C=Clear | S=Save | L=Load"
         ]
         
         for i, instruction in enumerate(instructions):
